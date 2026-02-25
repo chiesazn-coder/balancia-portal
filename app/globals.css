@@ -1,26 +1,68 @@
+/* app/globals.css */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
+  /* Medium-like reading defaults */
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: light;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-white text-neutral-900 antialiased;
+  }
+
+  a {
+    @apply text-neutral-900 underline-offset-4 hover:underline;
+  }
+
+  /* --- Balancia / Medium-like article typography --- */
+  .prose-balancia {
+    @apply text-neutral-800;
+  }
+
+  .prose-balancia p {
+    @apply text-base leading-8 text-neutral-800;
+  }
+
+  .prose-balancia p + p {
+    @apply mt-6;
+  }
+
+  .prose-balancia h2 {
+    @apply mt-10 text-xl font-semibold tracking-tight text-neutral-900;
+  }
+
+  .prose-balancia h3 {
+    @apply mt-8 text-lg font-semibold tracking-tight text-neutral-900;
+  }
+
+  .prose-balancia ul {
+    @apply mt-6 list-disc pl-6;
+  }
+
+  .prose-balancia ol {
+    @apply mt-6 list-decimal pl-6;
+  }
+
+  .prose-balancia li {
+    @apply mt-2 leading-7 text-neutral-800;
+  }
+
+  .prose-balancia blockquote {
+    @apply mt-8 border-l-2 border-neutral-300 pl-5 text-neutral-700;
+  }
+
+  .prose-balancia a {
+    @apply underline underline-offset-4 hover:text-neutral-900;
+  }
+
+  .prose-balancia hr {
+    @apply my-10 border-neutral-200;
+  }
+
 }
