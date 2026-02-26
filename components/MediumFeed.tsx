@@ -110,7 +110,7 @@ export default function MediumFeed({ items }: { items: PostItem[] }) {
 
                 {/* Thumbnail ala Medium */}
                 {cover && (
-                  <div className="hidden sm:block shrink-0">
+                  <div className="shrink-0">
                     <div className="relative h-28 w-44 overflow-hidden rounded-xl bg-neutral-50 border border-neutral-100 group-hover:shadow-md transition-all duration-500">
                       <Image 
                         src={cover} 
