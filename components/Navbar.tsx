@@ -28,7 +28,7 @@ export default function Navbar() {
               className="object-contain"
             />
           </div>
-          <span className="text-2xl font-serif font-black text-neutral-900 tracking-tighter">
+          <span className="text-xl md:text-[18px] font-serif font-black text-neutral-900 tracking-tighter leading-none">
             Balancia Portal
           </span>
         </Link>
