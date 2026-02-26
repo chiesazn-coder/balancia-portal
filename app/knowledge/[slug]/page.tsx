@@ -1,13 +1,14 @@
 import Container from "@/components/Container";
 import Link from "next/link";
+import Image from "next/image"; 
 import { notFound } from "next/navigation";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
 
 import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image"; 
 import { POST_QUERY, POSTS_QUERY } from "@/sanity/lib/queries";
 
-// Helper untuk format tanggal
 function formatFullDate(iso: string) {
   if (!iso) return "N/A";
   const d = new Date(iso);
@@ -39,10 +40,27 @@ type PostDetail = {
   categories?: { _id: string; title: string }[];
 };
 
-// Medium Style Portable Text Components
 const ptComponents: PortableTextComponents = {
+  types: {
+    // Ini tetap dipertahankan agar gambar di dalam Body muncul
+    image: ({ value }) => (
+      <div className="my-12 overflow-hidden rounded-2xl bg-neutral-100 shadow-sm">
+        <Image
+          src={urlFor(value).url()}
+          alt={value.alt || "Article image"}
+          width={1200}
+          height={700}
+          className="w-full h-auto object-cover"
+        />
+        {value.caption && (
+          <p className="mt-4 text-center text-sm font-sans text-neutral-500 italic">
+            {value.caption}
+          </p>
+        )}
+      </div>
+    ),
+  },
   block: {
-    // Menggunakan font serif agar nyaman dibaca lama
     normal: ({ children }) => (
       <p className="mt-8 text-[20px] leading-[1.6] font-serif text-neutral-800 antialiased font-light">
         {children}
@@ -95,7 +113,6 @@ export default async function ArticleDetailPage({
   return (
     <Container className="pt-20 pb-32">
       <div className="mx-auto w-full max-w-[700px]">
-        {/* Header - Editorial Style */}
         <header>
           <div className="flex items-center gap-2 mb-10">
             <Link 
@@ -114,13 +131,14 @@ export default async function ArticleDetailPage({
             {post.title}
           </h1>
 
+          {/* BAGIAN MAIN IMAGE DI SINI SUDAH DIHAPUS */}
+
           {post.excerpt && (
-            <p className="mt-8 text-2xl leading-[1.4] text-neutral-500 font-light font-sans">
+            <p className="mt-10 text-2xl leading-[1.4] text-neutral-500 font-light font-sans">
               {post.excerpt}
             </p>
           )}
 
-          {/* Author Meta ala Medium */}
           <div className="mt-10 flex items-center gap-4">
             <div className="h-11 w-11 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-400 uppercase">
               B
@@ -138,7 +156,6 @@ export default async function ArticleDetailPage({
           <div className="mt-12 h-[1px] w-full bg-neutral-100" />
         </header>
 
-        {/* Article body */}
         <article className="mt-4">
           {post.body ? (
             <PortableText value={post.body} components={ptComponents} />
@@ -147,26 +164,20 @@ export default async function ArticleDetailPage({
           )}
         </article>
 
-        {/* Apple-Style Glassmorphism CTA Box */}
         <div className="mt-24 relative overflow-hidden rounded-[2.5rem] bg-neutral-900 p-10 md:p-14 text-white shadow-2xl">
-          {/* Subtle Decorative Glow */}
           <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-          
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400">Operational Support</span>
             </div>
-            
             <h3 className="text-3xl font-serif font-medium mb-4 leading-tight">
               Discuss an Upcoming Port Call
             </h3>
-            
             <p className="text-neutral-400 text-lg font-light leading-relaxed mb-10 max-w-lg">
               If operational clarification is needed regarding <span className="text-white italic underline underline-offset-4">{post.title}</span>, 
               a short discussion can be arranged without commercial pressure.
             </p>
-            
             <Link
               href="/discuss"
               className="inline-flex items-center justify-center rounded-full bg-white px-10 py-4 text-sm font-bold text-neutral-900 hover:bg-neutral-200 transition-all active:scale-95 shadow-xl"
