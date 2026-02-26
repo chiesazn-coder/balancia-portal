@@ -117,24 +117,46 @@ export default function LearningDashboard() {
             </div>
             
             <div className="relative overflow-hidden rounded-[3rem] border border-neutral-100 bg-neutral-50/30 p-16 text-center group">
+              {/* Grainy Texture Overlay */}
+              <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" 
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}>
+              </div>
+              
               <div className="relative z-10">
-                <div className="mx-auto w-20 h-20 bg-white rounded-[2rem] shadow-sm flex items-center justify-center mb-8 border border-neutral-100">
-                  {isLoggedIn ? <BookOpen className="text-neutral-300" size={32} /> : <Lock className="text-neutral-300" size={32} />}
+                <div className="mx-auto w-20 h-20 bg-white rounded-[2rem] shadow-sm flex items-center justify-center mb-8 border border-neutral-100 group-hover:rotate-6 transition-transform duration-500">
+                  {isLoggedIn ? (
+                    <BookOpen className="text-neutral-300" size={32} />
+                  ) : (
+                    <Lock className="text-neutral-300" size={32} />
+                  )}
                 </div>
+                
                 <h3 className="text-2xl font-serif font-medium text-neutral-900 mb-4">
                   {isLoggedIn ? "Ready to embark?" : "Locked Content"}
                 </h3>
+                
                 <p className="text-neutral-500 text-lg font-light max-w-xs mx-auto mb-10 leading-relaxed">
                   {isLoggedIn 
                     ? "Join the elite maritime professionals by completing our industry-verified courses."
                     : "Please sign in to view your learning progress and enrolled modules."}
                 </p>
-                <button 
-                  onClick={() => !isLoggedIn && signIn()}
-                  className="inline-flex items-center gap-3 bg-neutral-900 text-white px-8 py-4 rounded-full text-sm font-bold shadow-xl shadow-neutral-900/10 hover:bg-black transition-all"
-                >
-                  {isLoggedIn ? <Link href="/courses">Explore Catalog</Link> : "Sign In Now"} <ArrowRight size={18} />
-                </button>
+
+                {/* Perbaikan Tombol: Memisahkan Link dan Button agar teks muncul */}
+                {isLoggedIn ? (
+                  <Link 
+                    href="/courses" 
+                    className="inline-flex items-center gap-3 bg-neutral-900 text-white px-8 py-4 rounded-full text-sm font-bold shadow-xl shadow-neutral-900/10 hover:bg-black transition-all"
+                  >
+                    Explore Catalog <ArrowRight size={18} />
+                  </Link>
+                ) : (
+                  <button 
+                    onClick={() => signIn()}
+                    className="inline-flex items-center gap-3 bg-neutral-900 text-white px-8 py-4 rounded-full text-sm font-bold shadow-xl shadow-neutral-900/10 hover:bg-black transition-all"
+                  >
+                    Sign In Now <ArrowRight size={18} />
+                  </button>
+                )}
               </div>
             </div>
           </section>
