@@ -14,12 +14,12 @@ export default async function HomePage() {
       <div className="flex flex-col lg:flex-row gap-8 py-10">
         
         <main className="w-full max-w-[720px]">
-          {/* 3. Tampilkan WeatherWidget hanya di mobile (hidden di lg) */}
+
+          <MediumFeed items={posts} />
+
           <div className="mb-8 lg:hidden">
             <WeatherWidget />
           </div>
-
-          <MediumFeed items={posts} />
         </main>
 
         <RightSidebar
