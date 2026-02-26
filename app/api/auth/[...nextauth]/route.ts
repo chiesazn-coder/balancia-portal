@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 // ... import Credentials jika masih mau dipakai
