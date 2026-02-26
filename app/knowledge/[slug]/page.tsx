@@ -22,23 +22,15 @@ interface PostSlug {
   slug: string;
 }
 
-/**
- * Pre-render semua slug yang ada di Sanity (SSG)
- */
 export async function generateStaticParams() {
-  // Berikan tipe data PostSlug[] pada fetch
   const posts = await client.fetch<PostSlug[]>(POSTS_QUERY);
-  
-  // Sekarang p.slug sudah dikenali sebagai string, bukan any
   return posts.map((p) => ({ 
     slug: p.slug 
   }));
 }
 
-// Ubah ke true agar artikel baru di Sanity otomatis muncul tanpa build ulang
 export const dynamicParams = true;
 
-// Definisi tipe data yang lebih aman
 type PostDetail = {
   title: string;
   excerpt?: string;
@@ -47,28 +39,34 @@ type PostDetail = {
   categories?: { _id: string; title: string }[];
 };
 
+// Medium Style Portable Text Components
 const ptComponents: PortableTextComponents = {
   block: {
+    // Menggunakan font serif agar nyaman dibaca lama
     normal: ({ children }) => (
-      <p className="mt-5 text-[18px] leading-[1.85] text-neutral-800">{children}</p>
+      <p className="mt-8 text-[20px] leading-[1.6] font-serif text-neutral-800 antialiased font-light">
+        {children}
+      </p>
     ),
     h2: ({ children }) => (
-      <h2 className="mt-10 text-[22px] font-semibold leading-snug tracking-tight text-neutral-900">
+      <h2 className="mt-12 text-[28px] font-sans font-bold leading-tight tracking-tight text-neutral-900">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="mt-8 text-[18px] font-semibold leading-snug text-neutral-900">{children}</h3>
+      <h3 className="mt-10 text-[22px] font-sans font-bold leading-tight text-neutral-900">
+        {children}
+      </h3>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-8 border-l-4 border-neutral-200 pl-5 text-[18px] italic leading-[1.85] text-neutral-700">
+      <blockquote className="my-10 border-l-3 border-neutral-900 pl-6 text-[24px] font-serif italic leading-[1.4] text-neutral-500">
         {children}
       </blockquote>
     ),
   },
   list: {
     bullet: ({ children }) => (
-      <ul className="mt-5 list-disc space-y-2 pl-6 text-[18px] leading-[1.85] text-neutral-800">
+      <ul className="mt-8 list-disc space-y-4 pl-6 text-[20px] font-serif leading-[1.6] text-neutral-800 font-light">
         {children}
       </ul>
     ),
@@ -80,17 +78,14 @@ export default async function ArticleDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  // 1. Await params (Wajib di Next.js 15)
   const { slug } = await params;
 
-  // 2. Fetch data dengan cache revalidation (agar data fresh)
   const post: PostDetail | null = await client.fetch(
     POST_QUERY, 
     { slug },
-    { next: { revalidate: 60 } } // Cache 60 detik
+    { next: { revalidate: 60 } }
   );
 
-  // 3. Jika post null, langsung lempar ke 404
   if (!post) {
     return notFound();
   }
@@ -98,60 +93,83 @@ export default async function ArticleDetailPage({
   const category = post.categories?.[0]?.title;
 
   return (
-    <Container className="pt-10 pb-16">
-      <div className="mx-auto w-full max-w-2xl">
+    <Container className="pt-20 pb-32">
+      <div className="mx-auto w-full max-w-[700px]">
+        {/* Header - Editorial Style */}
         <header>
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center gap-2 mb-10">
             <Link 
               href="/knowledge" 
-              className="text-xs font-medium text-neutral-400 hover:text-neutral-900 transition-colors"
+              className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 hover:text-neutral-900 transition-colors"
             >
               Knowledge Base
             </Link>
-            <span className="text-neutral-300 text-xs">/</span>
-            <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">
+            <span className="text-neutral-200 text-[10px]">/</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
               {category || "Article"}
             </span>
           </div>
 
-          <h1 className="mt-3 text-4xl font-bold tracking-tight leading-tight text-neutral-900">
+          <h1 className="text-4xl md:text-5xl font-serif font-medium tracking-tight leading-[1.1] text-neutral-900 antialiased">
             {post.title}
           </h1>
 
           {post.excerpt && (
-            <p className="mt-6 text-xl leading-8 text-neutral-600 font-medium">
+            <p className="mt-8 text-2xl leading-[1.4] text-neutral-500 font-light font-sans">
               {post.excerpt}
             </p>
           )}
 
-          <div className="mt-6 flex items-center gap-3 text-sm text-neutral-500">
-            <div className="h-1 w-1 rounded-full bg-neutral-300" />
-            Updated {formatFullDate(post.updatedAt)}
+          {/* Author Meta ala Medium */}
+          <div className="mt-10 flex items-center gap-4">
+            <div className="h-11 w-11 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-400 uppercase">
+              B
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-neutral-900">Balancia Editorial</span>
+              <div className="flex items-center gap-2 text-xs text-neutral-400 font-light">
+                <span>{formatFullDate(post.updatedAt)}</span>
+                <span>•</span>
+                <span>5 min read</span>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-8 h-px w-full bg-neutral-100" />
+          <div className="mt-12 h-[1px] w-full bg-neutral-100" />
         </header>
 
-        {/* Article body dengan safety check */}
-        <article className="mt-10">
+        {/* Article body */}
+        <article className="mt-4">
           {post.body ? (
             <PortableText value={post.body} components={ptComponents} />
           ) : (
-            <p className="text-neutral-400 italic">This article has no content yet.</p>
+            <p className="text-neutral-400 italic font-serif mt-10">This article has no content yet.</p>
           )}
         </article>
 
-        {/* CTA box */}
-        <div className="mt-20 rounded-[32px] bg-neutral-50 border border-neutral-100 p-8">
-          <h3 className="text-lg font-bold text-neutral-900">Discuss an Upcoming Port Call</h3>
-          <p className="mt-3 text-sm leading-relaxed text-neutral-600">
-            If operational clarification is needed regarding <strong>{post.title}</strong>, 
-            a short discussion can be arranged without commercial pressure.
-          </p>
-          <div className="mt-6">
+        {/* Apple-Style Glassmorphism CTA Box */}
+        <div className="mt-24 relative overflow-hidden rounded-[2.5rem] bg-neutral-900 p-10 md:p-14 text-white shadow-2xl">
+          {/* Subtle Decorative Glow */}
+          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400">Operational Support</span>
+            </div>
+            
+            <h3 className="text-3xl font-serif font-medium mb-4 leading-tight">
+              Discuss an Upcoming Port Call
+            </h3>
+            
+            <p className="text-neutral-400 text-lg font-light leading-relaxed mb-10 max-w-lg">
+              If operational clarification is needed regarding <span className="text-white italic underline underline-offset-4">{post.title}</span>, 
+              a short discussion can be arranged without commercial pressure.
+            </p>
+            
             <Link
               href="/discuss"
-              className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-bold text-white hover:bg-neutral-800 transition-all shadow-lg shadow-neutral-200"
+              className="inline-flex items-center justify-center rounded-full bg-white px-10 py-4 text-sm font-bold text-neutral-900 hover:bg-neutral-200 transition-all active:scale-95 shadow-xl"
             >
               Request Operational Clarification
             </Link>
