@@ -1,6 +1,6 @@
-
 import MediumFeed from "@/components/MediumFeed"
 import RightSidebar from "@/components/RightSidebar"
+import WeatherWidget from "@/components/WeatherWidget" // 1. Import widgetnya
 import {client} from "@/sanity/lib/client"
 import {POSTS_QUERY} from "@/sanity/lib/queries"
 import {ports} from "@/lib/content"
@@ -10,10 +10,15 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-6">
-      <div className="flex gap-8 py-10">
-
-
+      {/* 2. Tambahkan flex-col agar di mobile kontennya bertumpuk ke bawah */}
+      <div className="flex flex-col lg:flex-row gap-8 py-10">
+        
         <main className="w-full max-w-[720px]">
+          {/* 3. Tampilkan WeatherWidget hanya di mobile (hidden di lg) */}
+          <div className="mb-8 lg:hidden">
+            <WeatherWidget />
+          </div>
+
           <MediumFeed items={posts} />
         </main>
 
